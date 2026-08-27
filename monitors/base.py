@@ -13,5 +13,5 @@ class Review:
 
 class Platform(ABC):
     @abstractmethod
-    def get_reviews(self, business_name: str) -> list[Review]:
+    def get_reviews(self, business_names: list[str]) -> list[Review]:
         pass

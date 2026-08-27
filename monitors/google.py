@@ -30,7 +30,13 @@ class GoogleReviewMonitor(Platform):
         print(f"[Google] Found: {place.get('name')} — {place.get('formatted_address')}")
         return place["place_id"]
 
-    def get_reviews(self, business_name: str) -> list[Review]:
+    def get_reviews(self, business_names: list[str]) -> list[Review]:
+        reviews = []
+        for business_name in business_names:
+            reviews.extend(self._get_reviews_for_business(business_name))
+        return reviews
+
+    def _get_reviews_for_business(self, business_name: str) -> list[Review]:
         place_id = self._find_place_id(business_name)
         if not place_id:
             print(f"[Google] No business found for: {business_name}")
