@@ -1,0 +1,38 @@
+{
+  "Metropolitan Bank San Jose CA": {
+    "f8b5a36654ba05985723bbd1bc1394311f39da5265431083b06fe0036f3dd2c7": {
+      "author": "Louisa Wong",
+      "rating": 5,
+      "time": "2026-03-23"
+    },
+    "ab6c4528d44d18deb13d4f2b11c578a19ea3ef00fbc016527cd42433846444b9": {
+      "author": "Maribeny Solis",
+      "rating": 5,
+      "time": "2021-09-10"
+    }
+  },
+  "Metropolitan Bank San Francisco CA": {
+    "0f8ff251a9937118162314b34830f2647091f9b894d149b4402c1ac2cc93271b": {
+      "author": "Krishin Asnani",
+      "rating": 4,
+      "time": "2025-06-06"
+    }
+  },
+  "Metropolitan Bank Oakland CA": {
+    "2d47196ae63c3a30cd8eae9e228d4a66d2d90fe07c4a457b85dbdc415f1b22de": {
+      "author": "Jeni W L",
+      "rating": 5,
+      "time": "2026-03-11"
+    },
+    "025194e1e43c76c9b1c1ea45306e49ecb6bff9bc736b4b72122508dcfe302820": {
+      "author": "FT",
+      "rating": 1,
+      "time": "2025-12-09"
+    },
+    "ff560f503dd3cf6bc436a014f6059136a0c8de3e4d89fa188b292e9608ff3143": {
+      "author": "Grim Reaper",
+      "rating": 3,
+      "time": "2019-12-08"
+    }
+  }
+}

@@ -9,6 +9,8 @@ class Review:
     text: str
     time: str
     platform: str
+    business: str = ""
+    link: str = ""
 
 
 class Platform(ABC):

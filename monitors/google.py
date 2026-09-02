@@ -54,6 +54,7 @@ class GoogleReviewMonitor(Platform):
         resp.raise_for_status()
         raw_reviews = resp.json().get("result", {}).get("reviews", [])
 
+        link = f"https://www.google.com/maps/place/?q=place_id:{place_id}"
         reviews = []
         for r in raw_reviews:
             reviews.append(Review(
@@ -62,5 +63,7 @@ class GoogleReviewMonitor(Platform):
                 text=r.get("text", ""),
                 time=datetime.fromtimestamp(r["time"]).strftime("%Y-%m-%d") if "time" in r else "",
                 platform="Google",
+                business=business_name,
+                link=link,
             ))
         return reviews
