@@ -43,4 +43,35 @@ def init_schema(conn) -> None:
         )
     """)
     conn.commit()
+    # `synced` = 0 means the Excel row is missing or out of date.
+    _add_column_if_missing(cursor, "reports", "synced", "TINYINT NOT NULL DEFAULT 0")
+    conn.commit()
+    cursor.close()
+    migrate_review_hashes(conn)
+
+
+def _add_column_if_missing(cursor, table: str, column: str, definition: str) -> None:
+    cursor.execute(
+        """
+        SELECT COUNT(*) FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = %s AND COLUMN_NAME = %s
+        """,
+        (table, column),
+    )
+    if cursor.fetchone()[0] == 0:
+        cursor.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
+        if (table, column) == ("reports", "synced"):
+            cursor.execute("UPDATE reports SET synced = 1 WHERE exported_at IS NOT NULL")
+
+
+def migrate_review_hashes(conn) -> None:
+    """Re-key existing rows to the business|platform|author hash used by
+    reporting._review_hash. Idempotent. UPDATE IGNORE skips rows that would
+    collide (an older duplicate of a review already re-keyed)."""
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE IGNORE reviews
+        SET review_hash = SHA2(CONCAT(business, '|', platform, '|', author), 256)
+    """)
+    conn.commit()
     cursor.close()

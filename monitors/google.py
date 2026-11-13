@@ -7,7 +7,11 @@ from .base import Platform, Review
 class GoogleReviewMonitor(Platform):
     BASE_URL = "https://maps.googleapis.com/maps/api/place"
 
-    def __init__(self):
+    MAX_REVIEWS = 5  # Place Details never returns more than this
+
+    def __init__(self, place_ids: dict[str, str] | None = None):
+        super().__init__()
+        self.place_ids = place_ids or {}
         self.api_key = os.getenv("GOOGLE_API_KEY")
         if not self.api_key:
             raise ValueError("GOOGLE_API_KEY not set in environment")
@@ -37,7 +41,7 @@ class GoogleReviewMonitor(Platform):
         return reviews
 
     def _get_reviews_for_business(self, business_name: str) -> list[Review]:
-        place_id = self._find_place_id(business_name)
+        place_id = self.place_ids.get(business_name) or self._find_place_id(business_name)
         if not place_id:
             print(f"[Google] No business found for: {business_name}")
             return []
@@ -46,13 +50,17 @@ class GoogleReviewMonitor(Platform):
             f"{self.BASE_URL}/details/json",
             params={
                 "place_id": place_id,
-                "fields": "reviews",
+                "fields": "reviews,user_ratings_total",
                 "reviews_sort": "newest",
                 "key": self.api_key,
             },
         )
         resp.raise_for_status()
-        raw_reviews = resp.json().get("result", {}).get("reviews", [])
+        result = resp.json().get("result", {})
+        raw_reviews = result.get("reviews", [])
+        total = result.get("user_ratings_total")
+        if total is not None and total <= self.MAX_REVIEWS and len(raw_reviews) == total:
+            self.complete.add((business_name, "Google"))
 
         link = f"https://www.google.com/maps/place/?q=place_id:{place_id}"
         reviews = []
